@@ -6,8 +6,10 @@ Detalhe, tudo oq eu to vendo é em Java 26, a versão mais recente até o moment
 
 Eu estou usando para aprender os recursos de Java da w3schools e o roadmap de Java proposto pela roadmap.sh. Eu vou seguir os tópicos e anotar tudo que eu achar importante, desde sintaxe básica até conceitos mais avançados
 
-w3schools: https://www.w3schools.com/java/default.asp
-roadmap.sh: https://roadmap.sh/java
+| Recurso | Link |
+|---------|------|
+| w3schools | https://www.w3schools.com/java/default.asp |
+| roadmap.sh | https://roadmap.sh/java |
 
 ---
 
@@ -19,11 +21,37 @@ Eu trabalhei muito com python, e o Java é bem diferente. Ele é mais verboso, o
 
 ---
 
+## Sumário
+
+- [Introdução](#introdução)
+  - [Pra rodar o Java](#pra-rodar-o-java)
+  - [Sintaxe básica](#sintaxe-básica)
+  - [Statements](#statements)
+- [Classes](#classes)
+  - [Atributos](#atributos)
+  - [Construtores](#construtores)
+  - [Modificadores de Acesso](#modificadores-de-acesso)
+  - [Encapsulamento](#encapsulamento)
+  - [Herança](#herança)
+  - [Polimorfismo](#polimorfismo)
+  - [Abstração](#abstração)
+- [Métodos](#métodos)
+  - [Criando um método](#criando-um-método)
+  - [Chamando um método](#chamando-um-método)
+  - [Parâmetros e Argumentos](#parâmetros-e-argumentos)
+  - [Múltiplos parâmetros](#multiplos-parâmetros)
+  - [Métodos com decisões](#métodos-com-decisões)
+  - [Return nos métodos](#return-nos-métodos)
+
+---
+
 ## Ordem que eu escolhi estudar e vou escrever (baseado nas pastas que eu criei):
 
-- Introdução
-- Métodos e Funções
-- Classes
+| # | Tópico | Pasta |
+|---|--------|-------|
+| 1 | Introdução | [`Introdução/`](Introdução/) |
+| 2 | Métodos e Funções | [`Métodos e funções/`](Métodos%20e%20funções/) |
+| 3 | Classes | [`Classes/`](Classes/) |
 
 ---
 
@@ -46,6 +74,14 @@ java MeuPrograma
 E pronto, rodou seu Hello World
 
 O que acabou de acontecer é que o comando `javac` compilou seu código Java em bytecode, que é um formato intermediário que a JVM pode entender. O comando `java` então executa esse bytecode na JVM, permitindo que seu programa seja executado em qualquer plataforma que tenha uma JVM instalada, o que é uma das grandes vantagens do Java: a portabilidade.
+
+```mermaid
+flowchart LR
+    A["📄 MeuPrograma.java"] -->|javac| B["⚙️ MeuPrograma.class\n(bytecode)"]
+    B -->|java| C["🖥️ JVM executa\no programa"]
+```
+
+> 📁 **Exemplo completo:** [`Introdução/Main.java`](Introdução/Main.java)
 
 ### Sintaxe básica
 
@@ -82,6 +118,33 @@ Classes e objetos é o conceito fundamental da programação orientada a objetos
 
 Um jeito de se pensar é que uma classe é um template para criar objetos.
 
+```mermaid
+flowchart LR
+    subgraph Classe ["🏭 Classe = Molde"]
+        P["Propriedades\n(modelo, fabricante, km)"]
+        M["Métodos\n(exibirInfo, buzinar)"]
+    end
+    Classe -->|new| O1["🚗 Objeto 1\nFusca"]
+    Classe -->|new| O2["🚗 Objeto 2\nCivic"]
+    Classe -->|new| O3["🚗 Objeto 3\nCorolla"]
+```
+
+Os conceitos de OOP que vou cobrir aqui seguem essa relação:
+
+```mermaid
+flowchart TD
+    CL["Classes & Objetos"] --> AT["Atributos"]
+    CL --> CO["Construtores"]
+    CL --> MA["Modificadores de Acesso"]
+    MA --> EN["Encapsulamento"]
+    CL --> HE["Herança"]
+    HE --> PO["Polimorfismo"]
+    EN --> AB["Abstração"]
+    HE --> AB
+```
+
+> 📁 **Exemplos deste tópico:** [`Classes/`](Classes/)
+
 Vamos supor que eu tenha que projetar um sistema que coordena informações sobre carros. Como modelo, fabricante, kilometragem, etc. Para agilizar esse processo, eu posso criar uma classe `Carro` que define as propriedades e comportamentos comuns a todos os carros. Por exemplo:
 
 ```java
@@ -99,6 +162,8 @@ public class Carro {
 ```
 No exemplo acima, a classe `Carro` tem três propriedades: `modelo`, `fabricante`, e `kilometragem`. Ela também tem um método chamado `exibirInformacoes()`, que imprime as informações do carro no console. Com essa classe, eu posso criar objetos específicos de carros, como um `Carro` chamado "Fusca" da fabricante "Volkswagen" com uma kilometragem de 100.000 km.
 
+> 📁 **Exemplo básico:** [`Classes/Basicos_da_classe.java`](Classes/Basicos_da_classe.java)
+
 ### Atributos
 
 Atributos (ou variáveis de instância) são as propriedades que definem o estado de um objeto. Quando você cria uma classe, os atributos são as variáveis declaradas dentro dela. Cada objeto criado a partir da classe tem sua própria cópia dos atributos, ou seja, modificar o atributo de um objeto não afeta os outros.
@@ -106,6 +171,8 @@ Atributos (ou variáveis de instância) são as propriedades que definem o estad
 Pra acessar ou modificar um atributo, você usa o operador ponto (`.`). Por exemplo: `carro1.modelo = "Fusca"` define o modelo do `carro1`, e `carro1.modelo` acessa esse valor. Simples assim.
 
 O importante é entender que os objetos são independentes. Se eu mudar a kilometragem do `carro2`, a do `carro1` continua a mesma. Cada um vive na sua bolha.
+
+> 📁 **Arquivo:** [`Classes/Atributos.java`](Classes/Atributos.java)
 
 ```java
 public class Atributos {
@@ -146,6 +213,8 @@ Construtores carro1 = new Construtores("Fusca", "Volkswagen", 100000);
 ```
 
 Dentro do construtor, usamos a palavra-chave `this` para diferenciar o atributo da classe do parâmetro que estamos recebendo. O `this.modelo` se refere ao atributo do objeto, enquanto `modelo` (sem o `this`) se refere ao parâmetro do construtor.
+
+> 📁 **Arquivo:** [`Classes/Construtores.java`](Classes/Construtores.java)
 
 ```java
 public class Construtores {
@@ -193,6 +262,15 @@ Além dos modificadores de acesso, existem outros modificadores importantes:
 
 Na prática, a regra é: atributos `private` + métodos `public` (getters/setters) para acessar. Isso é a base do encapsulamento.
 
+> 📁 **Arquivo:** [`Classes/Modificadores_de_acesso.java`](Classes/Modificadores_de_acesso.java)
+
+| Modificador | Mesma classe | Mesmo pacote | Subclasse | Qualquer lugar |
+|-------------|:---:|:---:|:---:|:---:|
+| `public` | ✅ | ✅ | ✅ | ✅ |
+| `protected` | ✅ | ✅ | ✅ | ❌ |
+| default | ✅ | ✅ | ❌ | ❌ |
+| `private` | ✅ | ❌ | ❌ | ❌ |
+
 ```java
 public class Modificadores_de_acesso {
     public String nome = "Nicolau";       // Qualquer classe acessa
@@ -231,6 +309,17 @@ Na prática, isso significa:
 - Métodos `set` (setters) para **alterar** os valores
 
 A grande sacada é que nos setters você pode colocar **validações**. Por exemplo, impedir que alguém defina uma idade negativa ou um salário abaixo de zero. Em vez de confiar em quem usa a classe, você controla tudo dentro dela. É como ter uma porta com tranca: o dado está lá dentro, mas só entra quem segue as regras.
+
+```mermaid
+flowchart LR
+    EXT["🌍 Código externo"] -->|"setIdade(25)"| SET["✅ Setter\n(valida)"]
+    SET --> PRIV["🔒 private idade"]
+    PRIV --> GET["📖 Getter"]
+    GET -->|"getIdade()"| EXT
+    EXT -.-x|"objeto.idade = -5"| PRIV
+```
+
+> 📁 **Arquivo:** [`Classes/Encapsulamento.java`](Classes/Encapsulamento.java)
 
 ```java
 public class Encapsulamento {
@@ -284,6 +373,26 @@ Dentro do construtor da subclasse, usamos `super()` para chamar o construtor da 
 
 A vantagem é evitar repetição de código. Se `Carro` e `Moto` têm atributos em comum (marca, ano), coloca tudo em `Veiculo` e ambos herdam. Aí cada um adiciona só o que é específico dele.
 
+```mermaid
+classDiagram
+    class Veiculo {
+        String marca
+        int ano
+        buzinar()
+        exibirInfo()
+    }
+    class Carro {
+        int portas
+    }
+    class Moto {
+        boolean temBau
+    }
+    Veiculo <|-- Carro : extends
+    Veiculo <|-- Moto : extends
+```
+
+> 📁 **Arquivo:** [`Classes/Heranca.java`](Classes/Heranca.java)
+
 ```java
 class Veiculo {
     String marca;
@@ -325,6 +434,28 @@ class Moto extends Veiculo {
 Polimorfismo significa "muitas formas". É a capacidade de um mesmo método se comportar de maneiras diferentes dependendo de qual classe o implementa. Está diretamente ligado à herança.
 
 Na prática: a classe pai define um método, e cada subclasse **sobrescreve** (`@Override`) esse método com sua própria versão. O Java sabe qual versão chamar com base no tipo real do objeto.
+
+```mermaid
+classDiagram
+    class Animal {
+        String nome
+        fazerSom() "faz algum som..."
+    }
+    class Cachorro {
+        fazerSom() "Au au!"
+    }
+    class Gato {
+        fazerSom() "Miau!"
+    }
+    class Pato {
+        fazerSom() "Quack!"
+    }
+    Animal <|-- Cachorro
+    Animal <|-- Gato
+    Animal <|-- Pato
+```
+
+> 📁 **Arquivo:** [`Classes/Polimorfismo.java`](Classes/Polimorfismo.java)
 
 ```java
 Animal animal1 = new Cachorro("Rex");
@@ -376,6 +507,46 @@ for (Animal a : animais) {
 
 Abstração é esconder a complexidade e mostrar só o que é essencial. Em Java, usamos **classes abstratas** e **interfaces** pra isso.
 
+```mermaid
+classDiagram
+    class Forma {
+        <<abstract>>
+        String cor
+        calcularArea()* double
+        exibir() void
+    }
+    class Desenhavel {
+        <<interface>>
+        desenhar() void
+    }
+    class Redimensionavel {
+        <<interface>>
+        redimensionar(fator) void
+    }
+    class Circulo {
+        double raio
+        calcularArea() double
+    }
+    class Retangulo {
+        double largura
+        double altura
+        calcularArea() double
+    }
+    class Quadrado {
+        double lado
+        calcularArea() double
+        desenhar() void
+        redimensionar(fator) void
+    }
+    Forma <|-- Circulo
+    Forma <|-- Retangulo
+    Forma <|-- Quadrado
+    Desenhavel <|.. Quadrado : implements
+    Redimensionavel <|.. Quadrado : implements
+```
+
+> 📁 **Arquivo:** [`Classes/Abstracao.java`](Classes/Abstracao.java)
+
 **Classe abstrata:**
 - Não pode ser instanciada diretamente (não dá pra fazer `new Forma()`)
 - Pode ter métodos abstratos (só a assinatura, sem corpo) que as subclasses são **obrigadas** a implementar
@@ -402,6 +573,16 @@ class Quadrado extends Forma implements Desenhavel, Redimensionavel {
 
 A diferença entre classe abstrata e interface: a classe abstrata pode ter atributos e métodos completos, enquanto a interface é puramente um contrato de "quais métodos você precisa ter". Use classe abstrata quando as subclasses compartilham código em comum, e interface quando classes totalmente diferentes precisam seguir o mesmo contrato.
 
+> **Resumo rápido: Classe Abstrata vs Interface**
+>
+> | | Classe Abstrata | Interface |
+> |---|---|---|
+> | Instanciar? | ❌ Não | ❌ Não |
+> | Métodos concretos? | ✅ Sim | ❌ Não (só abstratos) |
+> | Atributos? | ✅ Sim | ❌ Só constantes |
+> | Herança múltipla? | ❌ Só uma classe | ✅ Várias interfaces |
+> | Palavra-chave | `extends` | `implements` |
+
 ---
 
 ## Métodos
@@ -411,6 +592,8 @@ Um `método` é um bloco de codigo que roda apenas quando é chamado. Você pode
 Além disso, métodos são conhecidos por fazer ações específicas, então eles são conhecidos também como `funções`.
 
 Por que eu deveria utilizar métodos? Para reutilizar código, definir ele uma vez e usar quantas vezes precisar. Além de ser um ótimo e simples jeito de organizar o seu código em "código limpo"
+
+> 📁 **Exemplos deste tópico:** [`Métodos e funções/`](Métodos%20e%20funções/)
 
 ### Criando um método
 
@@ -431,6 +614,8 @@ public class MinhaClasse {
 ### Chamando um método
 
 Olha o exemplo abaixo:
+
+> 📁 **Arquivo:** [`Métodos e funções/Metodo_simples.java`](Métodos%20e%20funções/Metodo_simples.java)
 
 ```java
 public class Main {
@@ -494,6 +679,8 @@ Quando um `parâmetro` é passando para um método, ele é chamado de `argumento
 
 Como citado anteriormente, você pode ter quantos parâmetros quiser em um método, contanto que os separe com vírgula. Por exemplo:
 
+> 📁 **Arquivo:** [`Métodos e funções/Multiplos_parametros.java`](Métodos%20e%20funções/Multiplos_parametros.java)
+
 ```java
 public class Main {
   static void myMethod(String fname, int age) {
@@ -511,6 +698,8 @@ public class Main {
 Separamos `fname`e `age` com vírgulas, agora a função recebe 2 parâmetros, o que aumenta por consequência a quantidade de argumentos
 
 ### Métodos com decisões
+
+> 📁 **Arquivo:** [`Métodos e funções/Metodos_com_decisoes.java`](Métodos%20e%20funções/Metodos_com_decisoes.java)
 
 ```java
 public class Metodos_com_decisoes {
@@ -534,6 +723,8 @@ Não tem muito o que detalhar deste código, é só mais um exemplo de como mét
 ### Return nos métodos
 
 Métodos não precisam retornar um valor, como vimos no exemplo do `checkAge`, mas eles também podem retornar um valor. Para isso, você precisa especificar o tipo de retorno do método e usar a palavra-chave `return` para retornar o valor desejado. Por exemplo:
+
+> 📁 **Arquivo:** [`Métodos e funções/Return.java`](Métodos%20e%20funções/Return.java)
 
 ```java
 public class Main {
