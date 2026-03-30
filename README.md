@@ -57,6 +57,8 @@ Eu trabalhei muito com python, e o Java é bem diferente. Ele é mais verboso, o
 
 ## Introdução
 
+> 📁 **Exemplos deste tópico:** [`Introdução/`](Introdução/)
+
 ### Pra rodar o Java
 
 Vamos supor que você já tenha instalado o Java Development Kit (JDK) e configurado as variáveis de ambiente corretamente. E além disso, você e suas super habilidades de programação fizeram um hello world. Para compilar um arquivo Java, nesse caso, seu hello world, você pode usar o comando `javac` seguido do nome do arquivo. Por exemplo:
@@ -97,16 +99,67 @@ public class Main {
 
 A classe `Main` é a definição de uma classe em Java. Em Java, tudo precisa estar dentro de uma classe, mesmo o código que é executado. O nome da classe deve ser o mesmo do arquivo, ou seja, se a classe se chama `Main`, o arquivo deve ser `Main.java`. A palavra-chave `public` indica que a classe é pública e pode ser acessada por outras classes. A palavra-chave `class` é usada para definir uma nova classe.
 
+```mermaid
+flowchart TD
+    subgraph Arquivo ["Main.java"]
+        CL["public class Main"] --> MT["public static void main(String[] args)"]
+        MT --> ST["System.out.println(...)"]
+    end
+    style CL fill:#4a9eff,color:#fff
+    style MT fill:#f5a623,color:#fff
+    style ST fill:#7ed321,color:#fff
+```
+
 Estou utilizando um método `main` que é o ponto de entrada do programa. Ele é obrigatório em qualquer aplicação Java, e é onde o programa começa a ser executado. O método `main` tem uma assinatura específica: ele deve ser `public`, `static`, e retornar `void`. Ele também aceita um array de strings como argumento, que pode ser usado para passar parâmetros para o programa. As {} conhecidas como chaves indicam o início e o fim de um bloco de código.
 
+> **Anatomia do `public static void main(String[] args)`:**
+>
+> | Parte | Significado |
+> |-------|-------------|
+> | `public` | Acessível de qualquer lugar |
+> | `static` | Pertence à classe, não precisa de objeto |
+> | `void` | Não retorna nada |
+> | `main` | Nome obrigatório do ponto de entrada |
+> | `String[] args` | Parâmetros passados pelo terminal |
+
 O `System.out.println` é um método que imprime uma linha de texto no console. Ele é parte da classe `System`, que é uma classe utilitária fornecida pelo Java para realizar operações de entrada e saída, entre outras coisas. O `out`, gíria para "output", é um objeto do tipo `PrintStream` que representa a saída padrão (normalmente o console), e o `println`, gíria para "print line", é um método desse objeto que imprime o texto seguido de uma nova linha. Ou seja, várias etapas para recriar a função print do Python, mas é assim que o Java funciona, ele é mais detalhado e explícito.
+
+```mermaid
+flowchart LR
+    SYS["System"] --> OUT["out\n(PrintStream)"]
+    OUT --> PRINTLN["println(texto)\n→ imprime + pula linha"]
+```
+
+> **Comparação rápida com Python:**
+>
+> | Python | Java |
+> |--------|------|
+> | `print("Hello")` | `System.out.println("Hello");` |
+> | Sem ponto e vírgula | Precisa de `;` no final |
+> | Sem classe obrigatória | Tudo dentro de uma classe |
+> | `python arquivo.py` | `javac Arquivo.java` + `java Arquivo` |
 
 
 ### Statements
 
 Um programa de computador é simplesmente uma lista de "instruções" que são "executadas" pela máquina. Em linguagem de programação, essas "instruções" são chamadas de "statements". Um statement é uma linha de código que realiza uma ação específica. Por exemplo, em Java, a linha `System.out.println("Hello, World!");` é um statement que imprime "Hello, World!" no console.
 
+```mermaid
+flowchart TD
+    S1["Statement 1: int x = 5;"] --> S2["Statement 2: int y = 10;"]
+    S2 --> S3["Statement 3: System.out.println(x + y);"]
+    S3 --> FIM["✅ Programa termina"]
+```
+
 Um detalhe importante, os statements em Java terminam com um ponto e vírgula (`;`). Isso é diferente de algumas outras linguagens, como Python, onde os statements não precisam de um terminador específico. O ponto e vírgula é usado para indicar o final de um statement, permitindo que o compilador saiba onde uma instrução termina e a próxima começa. Se você esquecer de colocar o ponto e vírgula no final de um statement, o compilador vai gerar um erro, porque ele não vai conseguir entender onde o statement termina.
+
+> **Regra de ouro:**
+> ```
+> Linguagem humana:  "Olá mundo."
+> Java:              System.out.println("Olá mundo");
+>                                                    ↑
+>                                               ponto e vírgula = ponto final da frase
+> ```
 
 Imagine que um statement como uma frase na linguagem humana. Mas ao invés de utilizar "." para terminar a frase, o Java utiliza ";". Então, cada vez que você escreve um statement, é como se estivesse escrevendo uma frase, e o ponto e vírgula é o sinal de pontuação que indica o fim dessa frase. Sem ele, o Java não consegue entender onde a frase termina, e isso causa um erro de sintaxe.
 
@@ -593,6 +646,16 @@ Além disso, métodos são conhecidos por fazer ações específicas, então ele
 
 Por que eu deveria utilizar métodos? Para reutilizar código, definir ele uma vez e usar quantas vezes precisar. Além de ser um ótimo e simples jeito de organizar o seu código em "código limpo"
 
+```mermaid
+flowchart LR
+    MAIN["main()"] -->|chama| M1["metodo1()"]
+    MAIN -->|chama| M2["metodo2()"]
+    MAIN -->|chama| M3["metodo3()"]
+    M1 -->|retorna| MAIN
+    M2 -->|retorna| MAIN
+    M3 -->|retorna| MAIN
+```
+
 > 📁 **Exemplos deste tópico:** [`Métodos e funções/`](Métodos%20e%20funções/)
 
 ### Criando um método
@@ -610,6 +673,16 @@ public class MinhaClasse {
 - `MeuMetodo` é o nome do método. Você pode escolher qualquer nome que siga as regras de nomenclatura do Java.
 - `static` é um modificador que indica que o método pertence à classe, e não a uma instância específica da classe. Isso significa que você pode chamar o método sem criar um objeto da classe.
 - `void` é o tipo de retorno do método, indicando que ele não retorna nenhum valor. Se o método retornar um valor, você deve especificar o tipo de retorno, como `int`, `String`, etc. Vou falar  mais sobre isso em outro diretório.
+
+> **Anatomia de um método:**
+> ```
+> static  void  meuMetodo  ()
+>   │      │       │        │
+>   │      │       │        └─ parâmetros (vazio nesse caso)
+>   │      │       └───────── nome do método
+>   │      └──────────────── tipo de retorno (void = nada)
+>   └───────────────────── modificador (pertence à classe)
+> ```
 
 ### Chamando um método
 
@@ -673,6 +746,20 @@ No método acima, criamos uma váriavel string chamada `fname` como parâmetro d
 
 Quando um `parâmetro` é passando para um método, ele é chamado de `argumento`. No exemplo acima, "Liam", "Jenny", e "Anja" são argumentos que estão sendo passados para o método `myMethod`.
 
+> **Parâmetro vs Argumento:**
+>
+> | Conceito | O que é | Onde aparece |
+> |----------|---------|-------------|
+> | **Parâmetro** | A variável na definição do método | `static void myMethod(String fname)` |
+> | **Argumento** | O valor passado na chamada | `myMethod("Liam")` |
+
+```mermaid
+flowchart LR
+    CALL["myMethod(\"Liam\")"] -->|"Liam" → fname| METHOD["static void myMethod(String fname)"]
+    METHOD --> PRINT["println(fname + \" Refsnes\")"]
+    PRINT --> OUTPUT["\"Liam Refsnes\""]
+```
+
 ---
 
 ### Multiplos parâmetros
@@ -701,6 +788,13 @@ Separamos `fname`e `age` com vírgulas, agora a função recebe 2 parâmetros, o
 
 > 📁 **Arquivo:** [`Métodos e funções/Metodos_com_decisoes.java`](Métodos%20e%20funções/Metodos_com_decisoes.java)
 
+```mermaid
+flowchart TD
+    START["checkAge(age)"] --> IF{"age < 18?"}
+    IF -->|✅ Sim| DENIED["Access denied"]
+    IF -->|❌ Não| GRANTED["Access granted"]
+```
+
 ```java
 public class Metodos_com_decisoes {
   static void checkAge(int age) {
@@ -723,6 +817,23 @@ Não tem muito o que detalhar deste código, é só mais um exemplo de como mét
 ### Return nos métodos
 
 Métodos não precisam retornar um valor, como vimos no exemplo do `checkAge`, mas eles também podem retornar um valor. Para isso, você precisa especificar o tipo de retorno do método e usar a palavra-chave `return` para retornar o valor desejado. Por exemplo:
+
+```mermaid
+flowchart LR
+    CALL["myMethod(3)"] --> CALC["return 5 + 3"]
+    CALC --> RESULT["8"]
+    RESULT --> PRINT["println(8)"]
+```
+
+> **`void` vs tipo de retorno:**
+>
+> | Tipo de retorno | O que faz | Exemplo |
+> |-----------------|-----------|--------|
+> | `void` | Não retorna nada, só executa | `static void checkAge(int age)` |
+> | `int` | Retorna um número inteiro | `static int myMethod(int x)` |
+> | `String` | Retorna um texto | `static String getName()` |
+> | `boolean` | Retorna verdadeiro/falso | `static boolean isAdult(int age)` |
+> | `double` | Retorna um decimal | `static double calcMedia(int a, int b)` |
 
 > 📁 **Arquivo:** [`Métodos e funções/Return.java`](Métodos%20e%20funções/Return.java)
 
