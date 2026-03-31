@@ -35,6 +35,7 @@ Eu trabalhei muito com python, e o Java é bem diferente. Ele é mais verboso, o
   - [Math](#math)
   - [Booleanos](#booleanos)
   - [Arrays](#arrays)
+  - [Lists](#lists)
   - [Imports](#imports)
 - [Controle de Fluxo](#controle-de-fluxo)
   - [If Else](#if-else)
@@ -215,7 +216,8 @@ flowchart LR
     C --> E["Math"]
     C --> F["Booleanos"]
     B --> G["Arrays"]
-    G --> H["Imports"]
+    G --> L["Lists"]
+    L --> H["Imports"]
 ```
 
 ### Variáveis
@@ -545,6 +547,117 @@ Arrays.sort(numeros);                         // Ordena: [1, 2, 3, 5, 8, 9]
 System.out.println(Arrays.toString(numeros)); // Imprime bonito
 int indice = Arrays.binarySearch(numeros, 5); // Busca (precisa estar ordenado)
 ```
+
+### Lists
+
+Arrays são ótimos, mas têm um problema: o tamanho é **fixo**. Se você criou um array de 4 posições, ele vai ter 4 posições pra sempre. E se você precisar adicionar mais um item? Criar um array novo, copiar tudo... é trabalhoso. Pra resolver isso, o Java tem as **Lists**, estruturas de dados **dinâmicas** que crescem e diminuem conforme a necessidade.
+
+A implementação mais comum é o `ArrayList`, que fica no pacote `java.util`.
+
+> 📁 **Arquivo:** [`Fundamentos/Lists_em_java.java`](Fundamentos/Lists_em_java.java)
+
+```mermaid
+flowchart LR
+    subgraph "ArrayList&lt;String&gt; frutas"
+        I0["[0] Maçã"] --- I1["[1] Banana"] --- I2["[2] Laranja"] --- I3["[3] ..."]
+    end
+    ADD["add()"] -->|cresce| I3
+```
+
+#### Criando Lists
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+// Jeito 1: ArrayList direto
+ArrayList<String> frutas = new ArrayList<>();
+frutas.add("Maçã");
+frutas.add("Banana");
+frutas.add("Laranja");
+
+// Jeito 2: usando a interface List (boa prática)
+List<Integer> numeros = new ArrayList<>();
+numeros.add(10);
+numeros.add(20);
+```
+
+> **Detalhe importante:** Lists não aceitam tipos primitivos (`int`, `double`, etc.). Usamos as **Wrapper Classes**:
+>
+> | Primitivo | Wrapper |
+> |-----------|---------|
+> | `int` | `Integer` |
+> | `double` | `Double` |
+> | `boolean` | `Boolean` |
+> | `char` | `Character` |
+>
+> O Java faz a conversão automaticamente (autoboxing/unboxing):
+> ```java
+> List<Integer> nums = new ArrayList<>();
+> nums.add(42);          // autoboxing: int → Integer
+> int valor = nums.get(0); // unboxing: Integer → int
+> ```
+
+#### Métodos mais usados
+
+| Método | O que faz | Exemplo | Resultado |
+|--------|-----------|---------|-----------|
+| `add(item)` | Adiciona no final | `frutas.add("Uva")` | `[..., Uva]` |
+| `add(pos, item)` | Adiciona na posição | `frutas.add(1, "Manga")` | Insere na pos 1 |
+| `get(pos)` | Acessa pelo índice | `frutas.get(0)` | `"Maçã"` |
+| `set(pos, item)` | Substitui na posição | `frutas.set(0, "Pera")` | Troca o primeiro |
+| `remove(item)` | Remove pelo valor | `frutas.remove("Banana")` | Remove Banana |
+| `remove(pos)` | Remove pelo índice | `frutas.remove(0)` | Remove o primeiro |
+| `size()` | Tamanho da lista | `frutas.size()` | `3` |
+| `contains(item)` | Contém o item? | `frutas.contains("Uva")` | `true` / `false` |
+| `indexOf(item)` | Posição do item | `frutas.indexOf("Uva")` | `2` (ou `-1`) |
+| `isEmpty()` | Está vazia? | `frutas.isEmpty()` | `true` / `false` |
+| `clear()` | Remove tudo | `frutas.clear()` | `[]` |
+
+#### Percorrendo Lists
+
+```java
+// For normal (quando precisa do índice)
+for (int i = 0; i < frutas.size(); i++) {
+    System.out.println("Posição " + i + ": " + frutas.get(i));
+}
+
+// For-each (mais limpo)
+for (String fruta : frutas) {
+    System.out.println("Fruta: " + fruta);
+}
+```
+
+#### Métodos úteis (`java.util.Collections`)
+
+```java
+import java.util.Collections;
+
+List<Integer> nums = new ArrayList<>();
+// ... adicionar valores ...
+
+Collections.sort(nums);       // Ordena
+Collections.reverse(nums);    // Inverte
+Collections.min(nums);        // Menor valor
+Collections.max(nums);        // Maior valor
+```
+
+#### Array vs List
+
+> | | Array | List (ArrayList) |
+> |---|---|---|
+> | Tamanho | **Fixo** (definido na criação) | **Dinâmico** (cresce/diminui) |
+> | Sintaxe | `String[] arr = new String[3];` | `List<String> list = new ArrayList<>();` |
+> | Acessar | `arr[0]` | `list.get(0)` |
+> | Tamanho | `arr.length` | `list.size()` |
+> | Adicionar | Não dá (tamanho fixo) | `list.add("item")` |
+> | Remover | Não dá (tamanho fixo) | `list.remove("item")` |
+> | Tipos primitivos | ✅ Aceita (`int[]`) | ❌ Só Wrapper (`Integer`) |
+> | Performance | Mais rápido | Um pouco mais lento |
+
+> **Quando usar cada um?**
+> - **Array:** quando o tamanho é conhecido e fixo (ex: dias da semana, meses do ano)
+> - **List:** quando o tamanho pode variar (ex: lista de usuários, carrinho de compras)
 
 ### Imports
 
