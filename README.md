@@ -50,6 +50,7 @@ Eu trabalhei muito com python, e o Java é bem diferente. Ele é mais verboso, o
   - [Herança](#herança)
   - [Polimorfismo](#polimorfismo)
   - [Abstração](#abstração)
+  - [Métodos de Classe](#métodos-de-classe)
 - [Métodos](#métodos)
   - [Criando um método](#criando-um-método)
   - [Chamando um método](#chamando-um-método)
@@ -66,6 +67,13 @@ Eu trabalhei muito com python, e o Java é bem diferente. Ele é mais verboso, o
   - [InputStream — Lendo de arquivos](#inputstream--lendo-de-arquivos)
   - [BufferedWriter e BufferedReader](#bufferedwriter-e-bufferedreader)
   - [Try-with-resources](#try-with-resources)
+- [Organização de Projeto](#organização-de-projeto)
+  - [O problema: tudo junto](#o-problema-tudo-junto)
+  - [Packages (pacotes)](#packages-pacotes)
+  - [Como declarar e usar pacotes](#como-declarar-e-usar-pacotes)
+  - [Estrutura de pastas de um projeto real](#estrutura-de-pastas-de-um-projeto-real)
+  - [Compilando e rodando com pacotes](#compilando-e-rodando-com-pacotes)
+  - [Convenções de nomenclatura](#convenções-de-nomenclatura)
 
 ---
 
@@ -79,6 +87,7 @@ Eu trabalhei muito com python, e o Java é bem diferente. Ele é mais verboso, o
 | 4 | Classes | [`Classes/`](Classes/) |
 | 5 | Métodos e Funções | [`Métodos e funções/`](Métodos%20e%20funções/) |
 | 6 | Input de Dados | [`Input/`](Input/) |
+| 7 | Organização de Projeto | [`Organização de projeto/`](Organização%20de%20projeto/) |
 
 ---
 
@@ -1376,6 +1385,127 @@ A diferença entre classe abstrata e interface: a classe abstrata pode ter atrib
 > | Herança múltipla? | ❌ Só uma classe | ✅ Várias interfaces |
 > | Palavra-chave | `extends` | `implements` |
 
+### Métodos de Classe
+
+Até agora, a gente viu métodos mais como "funções soltas" na seção de Métodos. Mas dentro de uma classe, métodos têm papéis mais específicos. Aqui o foco é: **como métodos funcionam dentro de uma classe**, incluindo a diferença entre métodos de instância e métodos `static`, sobrecarga (overloading), o uso do `this`, e métodos privados.
+
+```mermaid
+flowchart TD
+    MC["Métodos de Classe"] --> MI["Métodos de instância\n(precisam de objeto)"]
+    MC --> MS["Métodos static\n(pertencem à classe)"]
+    MC --> SO["Sobrecarga\n(mesmo nome, params diferentes)"]
+    MC --> MP["Métodos privados\n(uso interno)"]
+    MI --> THIS["this: referência\nao próprio objeto"]
+```
+
+> 📁 **Arquivo:** [`Classes/Metodos_de_classe.java`](Classes/Metodos_de_classe.java)
+
+**Métodos de instância vs static:**
+
+Métodos de **instância** precisam de um objeto pra serem chamados. Eles acessam os atributos do objeto normalmente.
+
+Métodos **`static`** pertencem à classe, não ao objeto. São chamados pela classe diretamente e **não podem acessar** atributos de instância.
+
+```java
+class Personagem {
+    String nome;
+    private static int totalPersonagens = 0;
+
+    Personagem(String nome) {
+        this.nome = nome;
+        totalPersonagens++;
+    }
+
+    // Método de instância: precisa de objeto
+    void apresentar() {
+        System.out.println("Eu sou " + nome);
+    }
+
+    // Método static: pertence à classe
+    static int getTotal() {
+        return totalPersonagens;
+        // nome não funciona aqui! static não acessa instância
+    }
+}
+
+// Uso:
+Personagem p = new Personagem("Arthas");
+p.apresentar();              // Método de instância: pelo objeto
+Personagem.getTotal();       // Método static: pela classe
+```
+
+> | | Método de Instância | Método `static` |
+> |---|---|---|
+> | Precisa de objeto? | ✅ Sim | ❌ Não |
+> | Acessa atributos? | ✅ Sim | ❌ Só static |
+> | Como chamar? | `objeto.metodo()` | `Classe.metodo()` |
+> | Exemplo | `getNome()`, `atacar()` | `main()`, `Math.sqrt()` |
+
+**O `this` dentro de métodos:**
+
+A palavra-chave `this` é uma referência ao **próprio objeto**. Serve pra duas coisas principais:
+
+1. **Diferenciar atributo de parâmetro** (quando têm o mesmo nome)
+2. **Chamar outros métodos** da mesma instância
+
+```java
+void apresentar() {
+    // this.getNome() e getNome() são a mesma coisa aqui dentro
+    System.out.println("Eu sou " + this.getNome());
+}
+```
+
+**Sobrecarga de métodos (Method Overloading):**
+
+Sobrecarga é ter **vários métodos com o mesmo nome**, mas com **parâmetros diferentes**. O Java decide qual chamar com base nos argumentos.
+
+```java
+void curar() {
+    // Cura padrão
+}
+
+void curar(int bonus) {
+    // Cura com bônus
+}
+
+void curar(int bonus, String fonte) {
+    // Cura com bônus e origem
+}
+
+// O Java escolhe sozinho:
+personagem.curar();               // chama curar()
+personagem.curar(3);              // chama curar(int)
+personagem.curar(2, "Poção");     // chama curar(int, String)
+```
+
+> ⚠️ **Sobrecarga ≠ Sobrescrita:**
+>
+> | | Sobrecarga (Overloading) | Sobrescrita (Override) |
+> |---|---|---|
+> | Onde? | Mesma classe | Subclasse |
+> | Nome? | Mesmo | Mesmo |
+> | Parâmetros? | **Diferentes** | **Iguais** |
+> | Anotação? | Nenhuma | `@Override` |
+
+**Métodos privados:**
+
+Métodos `private` só podem ser chamados **dentro da própria classe**. São usados como métodos auxiliares internos.
+
+```java
+private int calcularDano() {
+    return nivel * 10;
+}
+
+void atacar() {
+    // calcularDano() é usado internamente, ninguém de fora precisa saber dele
+    System.out.println(nome + " ataca com força " + calcularDano() + "!");
+}
+
+// De fora:
+personagem.atacar();         // OK
+personagem.calcularDano();   // ERRO! private
+```
+
 ---
 
 ## Métodos
@@ -1715,3 +1845,141 @@ String cidade = scanner.nextLine(); // Agora funciona!
 ```
 
 > **Regra prática:** sempre que usar `nextInt()`, `nextDouble()`, etc., e precisar de um `nextLine()` depois, coloque um `scanner.nextLine()` extra entre eles pra limpar o buffer.
+
+---
+
+## Organização de Projeto
+
+> 📁 **Exemplos deste tópico:** [`Organização de projeto/`](Organização%20de%20projeto/)
+
+Até agora, nos exemplos de herança e polimorfismo, a gente jogou várias classes no mesmo arquivo. Isso funciona, mas conforme o projeto cresce, vira uma bagunça impossível de manter. Organização é o que separa um script de estudo de um projeto real.
+
+```mermaid
+flowchart LR
+    ANTES["📄 Tudo_junto.java\n(6 classes empilhadas)"] -->|refatora| DEPOIS["📁 Projeto organizado\n(1 classe por arquivo)"]
+    DEPOIS --> MOD["📁 modelo/\nAnimal, Cachorro, Gato..."]
+    DEPOIS --> SRV["📁 servico/\nAnimalServico"]
+    DEPOIS --> MAIN["📄 Main.java"]
+```
+
+### O problema: tudo junto
+
+Em Java, só pode ter **UMA classe pública por arquivo**, e o nome do arquivo **tem que ser igual** ao da classe pública. Classes sem `public` podem ficar no mesmo arquivo (como fizemos em Heranca.java e Polimorfismo.java), mas isso não escala.
+
+> 📁 **Exemplo do problema:** [`Organização de projeto/Tudo_junto.java`](Organização%20de%20projeto/Tudo_junto.java)
+
+No `Tudo_junto.java`, temos 6 classes (Animal, Cachorro, Gato, Passaro, AnimalServico e Tudo_junto) todas empilhadas num arquivo só. Funciona? Funciona. Mas imagina isso com 20, 50, 100 classes... é como guardar todas as roupas num saco só.
+
+### Packages (pacotes)
+
+Packages são o jeito do Java de organizar classes em grupos lógicos, como pastas no seu computador. Na prática, **um pacote corresponde a uma pasta** no sistema de arquivos.
+
+Pra declarar que uma classe pertence a um pacote, usa a palavra-chave `package` **na primeira linha** do arquivo:
+
+```java
+package com_organizacao.modelo;
+
+public class Animal {
+    // ...
+}
+```
+
+Isso significa que o arquivo `Animal.java` mora na pasta `com_organizacao/modelo/`.
+
+### Como declarar e usar pacotes
+
+Quando uma classe precisa usar outra que está em um pacote diferente, ela precisa **importar**:
+
+```java
+package com_organizacao;
+
+import com_organizacao.modelo.Cachorro;  // Importa uma classe específica
+import com_organizacao.modelo.Gato;
+import com_organizacao.servico.AnimalServico;
+
+public class Main {
+    public static void main(String[] args) {
+        AnimalServico servico = new AnimalServico(10);
+        servico.adicionar(new Cachorro("Rex", "Pastor Alemão"));
+        servico.adicionar(new Gato("Mimi", true));
+        servico.listarTodos();
+    }
+}
+```
+
+> **Detalhe importante:** quando você organiza em pacotes, as classes precisam ser `public` pra serem acessíveis de outros pacotes. Lembra dos modificadores de acesso? É aqui que eles brilham.
+
+```mermaid
+flowchart TD
+    MAIN["Main.java\npackage com_organizacao"] -->|import| CACH["Cachorro.java\npackage com_organizacao.modelo"]
+    MAIN -->|import| GATO["Gato.java\npackage com_organizacao.modelo"]
+    MAIN -->|import| SRV["AnimalServico.java\npackage com_organizacao.servico"]
+    SRV -->|import| ANIMAL["Animal.java\npackage com_organizacao.modelo"]
+```
+
+### Estrutura de pastas de um projeto real
+
+O exemplo organizado fica assim:
+
+```
+Organização de projeto/
+├── Tudo_junto.java              ← O problema (tudo junto)
+└── com_organizacao/             ← O projeto organizado
+    ├── Main.java                ← Ponto de entrada
+    ├── modelo/                  ← Pacote das classes de dados
+    │   ├── Animal.java          ← Classe base
+    │   ├── Cachorro.java        ← Subclasse
+    │   ├── Gato.java            ← Subclasse
+    │   └── Passaro.java         ← Subclasse
+    └── servico/                 ← Pacote da lógica de negócio
+        └── AnimalServico.java   ← Gerencia os animais
+```
+
+> 📁 **Exemplo organizado:** [`Organização de projeto/com_organizacao/`](Organização%20de%20projeto/com_organizacao/)
+
+Cada classe tem seu próprio arquivo, cada pacote tem sua própria pasta. O `Main.java` ficou pequeno e limpo — ele só importa o que precisa, cria os objetos e chama os métodos. Cada classe cuida do seu próprio código.
+
+> **Comparação: antes vs depois**
+>
+> | Antes (tudo junto) | Depois (organizado) |
+> |---|---|
+> | 6 classes num arquivo | 1 classe por arquivo |
+> | Sem `public` nas classes | Todas `public` (acessíveis entre pacotes) |
+> | Sem `package` | Cada arquivo declara seu pacote |
+> | Sem `import` | Imports explícitos |
+> | Difícil de encontrar algo | Estrutura de pastas clara |
+
+### Compilando e rodando com pacotes
+
+Quando você usa pacotes, a compilação e execução mudam um pouco. Você precisa compilar **a partir da pasta pai** dos pacotes e referenciar a classe pelo nome completo:
+
+```bash
+# A partir da pasta "Organização de projeto/":
+javac com_organizacao/Main.java com_organizacao/modelo/*.java com_organizacao/servico/*.java
+
+# Pra rodar, usa o nome completo do pacote:
+java com_organizacao.Main
+```
+
+O `javac` compila todos os arquivos necessários, e o `java` executa usando o nome completo da classe (pacote.Classe).
+
+```mermaid
+flowchart LR
+    A["javac com_organizacao/...\n(compila tudo)"] --> B["⚙️ Gera .class\nem cada pasta"]
+    B --> C["java com_organizacao.Main\n(executa pelo nome completo)"]
+```
+
+### Convenções de nomenclatura
+
+O Java tem convenções fortes pra nomear pacotes e organizar projetos:
+
+| Elemento | Convenção | Exemplo |
+|----------|----------|----------|
+| Pacote | tudo minúsculo, sem espaços | `modelo`, `servico`, `com.empresa.projeto` |
+| Classe | PascalCase | `Animal`, `AnimalServico` |
+| Arquivo | Mesmo nome da classe pública | `Animal.java`, `AnimalServico.java` |
+| Pasta | Mesmo nome do pacote | `modelo/`, `servico/` |
+
+Em projetos do mundo real, pacotes costumam seguir o domínio reverso da empresa: `com.google.maps`, `br.com.empresa.sistema`. Nos nossos exemplos, mantemos simples com `com_organizacao.modelo` e `com_organizacao.servico`.
+
+> **Regra prática:** se você tem mais de 3 classes num arquivo, é hora de separar. Se você tem mais de 5 arquivos soltos, é hora de criar pacotes.
