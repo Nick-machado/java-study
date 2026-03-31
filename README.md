@@ -35,6 +35,7 @@ Eu trabalhei muito com python, e o Java é bem diferente. Ele é mais verboso, o
   - [Math](#math)
   - [Booleanos](#booleanos)
   - [Arrays](#arrays)
+  - [Imports](#imports)
 - [Controle de Fluxo](#controle-de-fluxo)
   - [If Else](#if-else)
   - [Switch](#switch)
@@ -56,6 +57,15 @@ Eu trabalhei muito com python, e o Java é bem diferente. Ele é mais verboso, o
   - [Múltiplos parâmetros](#multiplos-parâmetros)
   - [Métodos com decisões](#métodos-com-decisões)
   - [Return nos métodos](#return-nos-métodos)
+- [Input de Dados](#input-de-dados)
+  - [Scanner](#scanner)
+  - [Métodos do Scanner](#métodos-do-scanner)
+  - [Bug clássico: nextLine() depois de nextInt()](#bug-clássico-nextline-depois-de-nextint)
+  - [I/O Streams](#io-streams)
+  - [OutputStream — Escrevendo em arquivos](#outputstream--escrevendo-em-arquivos)
+  - [InputStream — Lendo de arquivos](#inputstream--lendo-de-arquivos)
+  - [BufferedWriter e BufferedReader](#bufferedwriter-e-bufferedreader)
+  - [Try-with-resources](#try-with-resources)
 
 ---
 
@@ -68,6 +78,7 @@ Eu trabalhei muito com python, e o Java é bem diferente. Ele é mais verboso, o
 | 3 | Controle de Fluxo | [`Controle de fluxo/`](Controle%20de%20fluxo/) |
 | 4 | Classes | [`Classes/`](Classes/) |
 | 5 | Métodos e Funções | [`Métodos e funções/`](Métodos%20e%20funções/) |
+| 6 | Input de Dados | [`Input/`](Input/) |
 
 ---
 
@@ -195,6 +206,7 @@ flowchart LR
     C --> E["Math"]
     C --> F["Booleanos"]
     B --> G["Arrays"]
+    G --> H["Imports"]
 ```
 
 ### Variáveis
@@ -524,6 +536,86 @@ Arrays.sort(numeros);                         // Ordena: [1, 2, 3, 5, 8, 9]
 System.out.println(Arrays.toString(numeros)); // Imprime bonito
 int indice = Arrays.binarySearch(numeros, 5); // Busca (precisa estar ordenado)
 ```
+
+### Imports
+
+Quando a gente usou `Arrays.sort()` ali em cima, teve que colocar `import java.util.Arrays;` no topo do arquivo. Isso é porque nem tudo em Java vem "de graça" — a maioria das classes precisa ser **importada** antes de usar.
+
+> 📁 **Arquivo:** [`Fundamentos/Imports.java`](Fundamentos/Imports.java)
+
+#### Como funciona
+
+O Java organiza suas classes em **pacotes** (packages). Um pacote é basicamente uma pasta que agrupa classes relacionadas. Pra usar uma classe que não tá no seu pacote atual, você precisa dizer pro Java onde encontrar ela com a palavra-chave `import`.
+
+```mermaid
+flowchart TD
+    JAVA["Java"] --> LANG["java.lang\n(automático)"]
+    JAVA --> UTIL["java.util"]
+    JAVA --> IO["java.io"]
+    JAVA --> TIME["java.time"]
+    LANG --> STRING["String"]
+    LANG --> MATH["Math"]
+    LANG --> INTEGER["Integer"]
+    UTIL --> SCANNER["Scanner"]
+    UTIL --> ARRAYS["Arrays"]
+    UTIL --> ARRAYLIST["ArrayList"]
+    IO --> FILE["File"]
+    IO --> BUFFERED["BufferedReader"]
+    TIME --> LOCAL["LocalDate"]
+```
+
+A sintaxe é simples — o `import` fica **antes** da classe e **depois** do `package` (se tiver):
+
+```java
+import java.util.Scanner;    // Importa só o Scanner
+import java.util.Arrays;     // Importa só o Arrays
+import java.time.LocalDate;  // Importa só o LocalDate
+```
+
+#### Wildcard (importar tudo de um pacote)
+
+Se você vai usar **várias classes** do mesmo pacote, pode importar todas de uma vez com o `*`:
+
+```java
+import java.util.*;  // Importa TUDO de java.util (Scanner, Arrays, ArrayList, etc.)
+```
+
+> **Classe específica vs Wildcard:**
+>
+> | Forma | Exemplo | Quando usar |
+> |-------|---------|-------------|
+> | Específica | `import java.util.Scanner;` | Usa 1-2 classes do pacote (mais claro) |
+> | Wildcard | `import java.util.*;` | Usa muitas classes do mesmo pacote |
+
+#### O pacote `java.lang` — o VIP
+
+O pacote `java.lang` é o **único** que não precisa de import. Ele é importado automaticamente em todo programa Java. Por isso que a gente usa `String`, `Math`, `System`, `Integer`, etc., sem importar nada:
+
+```java
+// Tudo isso funciona SEM import:
+String nome = "Nicolau";          // java.lang.String
+int numero = Integer.parseInt("42"); // java.lang.Integer
+double raiz = Math.sqrt(64);     // java.lang.Math
+System.out.println("Oi");        // java.lang.System
+```
+
+#### Pacotes mais comuns
+
+| Pacote | O que tem | Exemplo de classe |
+|--------|-----------|-------------------|
+| `java.lang` | Básico (auto-importado) | `String`, `Math`, `System`, `Integer` |
+| `java.util` | Utilitários e coleções | `Scanner`, `Arrays`, `ArrayList`, `HashMap` |
+| `java.io` | Entrada/saída de arquivos | `File`, `BufferedReader`, `FileWriter` |
+| `java.time` | Data e hora | `LocalDate`, `LocalTime`, `LocalDateTime` |
+| `java.math` | Precisão numérica | `BigDecimal`, `BigInteger` |
+
+> **Comparação com Python:**
+>
+> | Python | Java |
+> |--------|------|
+> | `import math` | `import java.lang.Math;` (desnecessário, já auto-importa) |
+> | `from os import path` | `import java.io.File;` |
+> | `import *` (evitar) | `import java.util.*;` (aceitável) |
 
 ---
 
@@ -1498,3 +1590,128 @@ public class Main {
 ```
 
 No exemplo acima, o método `myMethod` tem um tipo de retorno `int`, o que significa que ele retorna um valor inteiro. Dentro do método, usamos a palavra-chave `return` para retornar o resultado da expressão `5 + x`. Quando chamamos `myMethod(3)`, ele retorna `8`, que é então impresso no console.
+
+---
+
+## Input de Dados
+
+> 📁 **Exemplos deste tópico:** [`Input/`](Input/)
+
+Até agora, todos os nossos programas só **imprimiam** coisas no console. Mas e quando a gente quer **receber** informação do usuário ou ler/escrever arquivos? O Java tem duas grandes ferramentas pra isso:
+
+- **`Scanner`** — pra ler dados digitados pelo teclado (input do usuário)
+- **I/O Streams** — pra ler e escrever dados em **arquivos** (entrada e saída de dados)
+
+```mermaid
+flowchart TD
+    IO["Input / Output em Java"] --> SC["Scanner"]
+    IO --> STREAMS["I/O Streams"]
+    SC --> TECLADO["⌨️ Lê do teclado"]
+    STREAMS --> IS["InputStream\n(lê bytes)"]
+    STREAMS --> OS["OutputStream\n(escreve bytes)"]
+    STREAMS --> RW["Reader / Writer\n(lê/escreve texto)"]
+```
+
+### Scanner
+
+Pra usar o `Scanner`, primeiro você precisa **importar** ele, porque ele não faz parte do pacote padrão. A importação fica no topo do arquivo, antes da classe:
+
+```java
+import java.util.Scanner;
+```
+
+Depois, você cria um objeto `Scanner` que lê do `System.in` (a entrada padrão, ou seja, o teclado):
+
+```java
+Scanner scanner = new Scanner(System.in);
+```
+
+Agora é só usar os métodos do scanner pra ler diferentes tipos de dados:
+
+> 📁 **Arquivo:** [`Input/Input_de_dados.java`](Input/Input_de_dados.java)
+
+```java
+import java.util.Scanner;
+
+public class Input_de_dados {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Digite seu nome: ");
+        String nome = scanner.nextLine();
+        System.out.println("Olá, " + nome + "!");
+
+        System.out.print("Digite sua idade: ");
+        int idade = scanner.nextInt();
+        System.out.println("Você tem " + idade + " anos.");
+
+        scanner.close();
+    }
+}
+```
+
+> **Detalhe:** usamos `System.out.print()` (sem o `ln`) pra que o cursor fique na mesma linha, esperando o usuário digitar.
+
+### Métodos do Scanner
+
+Cada tipo de dado tem seu próprio método de leitura no Scanner:
+
+| Método | Tipo que lê | Exemplo |
+|--------|-------------|---------|
+| `nextLine()` | `String` (linha inteira) | `scanner.nextLine()` |
+| `next()` | `String` (uma palavra só) | `scanner.next()` |
+| `nextInt()` | `int` | `scanner.nextInt()` |
+| `nextDouble()` | `double` | `scanner.nextDouble()` |
+| `nextFloat()` | `float` | `scanner.nextFloat()` |
+| `nextLong()` | `long` | `scanner.nextLong()` |
+| `nextBoolean()` | `boolean` | `scanner.nextBoolean()` |
+| `nextByte()` | `byte` | `scanner.nextByte()` |
+| `nextShort()` | `short` | `scanner.nextShort()` |
+
+> **`next()` vs `nextLine()`:**
+>
+> | Método | O que lê | Exemplo de input: `"João Silva"` |
+> |--------|----------|----------------------------------|
+> | `next()` | Até o primeiro espaço | `"João"` |
+> | `nextLine()` | A linha inteira | `"João Silva"` |
+
+Depois de usar o Scanner, é boa prática **fechar** ele pra liberar recursos:
+
+```java
+scanner.close();
+```
+
+### Bug clássico: nextLine() depois de nextInt()
+
+Esse é um dos bugs mais comuns pra quem tá começando com Java. Quando você usa `nextInt()`, `nextDouble()`, ou qualquer outro método que lê um tipo primitivo, ele **não consome** a quebra de linha (`\n`) que o usuário digitou ao apertar Enter. Aí, quando você chama `nextLine()` logo depois, ele lê essa quebra de linha vazia em vez do texto que você queria.
+
+```mermaid
+flowchart TD
+    INPUT["Usuário digita: 22 ⏎"] --> NI["nextInt() lê: 22"]
+    NI --> BUFFER["Buffer ainda tem: \\n"]
+    BUFFER --> NL["nextLine() lê: \\n (vazio!)"]
+    NL --> SKIP["❌ Pulou a leitura!"]
+```
+
+**O problema:**
+
+```java
+System.out.print("Idade: ");
+int idade = scanner.nextInt();      // Lê 22, mas o \n fica no buffer
+
+System.out.print("Cidade: ");
+String cidade = scanner.nextLine(); // Lê o \n vazio! Não espera digitar
+```
+
+**A solução:** adicionar um `scanner.nextLine()` extra pra consumir o `\n` pendente:
+
+```java
+System.out.print("Idade: ");
+int idade = scanner.nextInt();
+scanner.nextLine(); // ← Limpa o \n do buffer
+
+System.out.print("Cidade: ");
+String cidade = scanner.nextLine(); // Agora funciona!
+```
+
+> **Regra prática:** sempre que usar `nextInt()`, `nextDouble()`, etc., e precisar de um `nextLine()` depois, coloque um `scanner.nextLine()` extra entre eles pra limpar o buffer.
