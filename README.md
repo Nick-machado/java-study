@@ -27,6 +27,20 @@ Eu trabalhei muito com python, e o Java é bem diferente. Ele é mais verboso, o
   - [Pra rodar o Java](#pra-rodar-o-java)
   - [Sintaxe básica](#sintaxe-básica)
   - [Statements](#statements)
+- [Fundamentos](#fundamentos)
+  - [Variáveis](#variáveis)
+  - [Tipos de Dados](#tipos-de-dados)
+  - [Operadores](#operadores)
+  - [Strings](#strings)
+  - [Math](#math)
+  - [Booleanos](#booleanos)
+  - [Arrays](#arrays)
+- [Controle de Fluxo](#controle-de-fluxo)
+  - [If Else](#if-else)
+  - [Switch](#switch)
+  - [While Loop](#while-loop)
+  - [For Loop](#for-loop)
+  - [Break e Continue](#break-e-continue)
 - [Classes](#classes)
   - [Atributos](#atributos)
   - [Construtores](#construtores)
@@ -50,8 +64,10 @@ Eu trabalhei muito com python, e o Java é bem diferente. Ele é mais verboso, o
 | # | Tópico | Pasta |
 |---|--------|-------|
 | 1 | Introdução | [`Introdução/`](Introdução/) |
-| 2 | Métodos e Funções | [`Métodos e funções/`](Métodos%20e%20funções/) |
-| 3 | Classes | [`Classes/`](Classes/) |
+| 2 | Fundamentos | [`Fundamentos/`](Fundamentos/) |
+| 3 | Controle de Fluxo | [`Controle de fluxo/`](Controle%20de%20fluxo/) |
+| 4 | Classes | [`Classes/`](Classes/) |
+| 5 | Métodos e Funções | [`Métodos e funções/`](Métodos%20e%20funções/) |
 
 ---
 
@@ -162,6 +178,638 @@ Um detalhe importante, os statements em Java terminam com um ponto e vírgula (`
 > ```
 
 Imagine que um statement como uma frase na linguagem humana. Mas ao invés de utilizar "." para terminar a frase, o Java utiliza ";". Então, cada vez que você escreve um statement, é como se estivesse escrevendo uma frase, e o ponto e vírgula é o sinal de pontuação que indica o fim dessa frase. Sem ele, o Java não consegue entender onde a frase termina, e isso causa um erro de sintaxe.
+
+---
+
+## Fundamentos
+
+> 📁 **Exemplos deste tópico:** [`Fundamentos/`](Fundamentos/)
+
+Agora que já sabemos compilar e rodar um programa Java, é hora de aprender os blocos fundamentais da linguagem: variáveis, tipos de dados, operadores, strings, a classe Math, booleanos e arrays. Esses conceitos são a base de tudo que vem depois.
+
+```mermaid
+flowchart LR
+    A["Variáveis"] --> B["Tipos de Dados"]
+    B --> C["Operadores"]
+    C --> D["Strings"]
+    C --> E["Math"]
+    C --> F["Booleanos"]
+    B --> G["Arrays"]
+```
+
+### Variáveis
+
+Em Java, toda variável precisa ter um **tipo declarado**. Isso é bem diferente de Python, onde o tipo é inferido automaticamente. A sintaxe é:
+
+```
+tipo nomeDaVariavel = valor;
+```
+
+> 📁 **Arquivo:** [`Fundamentos/Variaveis.java`](Fundamentos/Variaveis.java)
+
+```java
+// String: armazena texto (sempre entre aspas duplas)
+String nome = "Nicolau";
+
+// int: armazena números inteiros
+int idade = 22;
+
+// double: armazena números decimais (ponto flutuante)
+double altura = 1.75;
+
+// char: armazena UM único caractere (sempre entre aspas simples)
+char inicial = 'N';
+
+// boolean: armazena verdadeiro ou falso
+boolean estudante = true;
+```
+
+Variáveis podem ser **reatribuídas** (mudar de valor):
+
+```java
+idade = 23; // Ok, mudou o valor
+
+// Declarar sem inicializar e atribuir depois
+String cidade;
+cidade = "São Paulo";
+
+// Declarar múltiplas variáveis do mesmo tipo
+int x = 5, y = 10, z = 15;
+```
+
+> **Regra:** variáveis declaradas com `final` viram **constantes** e não podem ser alteradas:
+> ```java
+> final double PI = 3.14159;
+> PI = 3.14; // ❌ ERRO! Não pode reatribuir constante
+> ```
+
+### Tipos de Dados
+
+Java tem dois grupos de tipos: **primitivos** (valores diretos na memória) e **referência** (endereços de objetos como `String`, arrays, etc.).
+
+> 📁 **Arquivo:** [`Fundamentos/Tipos_de_dados.java`](Fundamentos/Tipos_de_dados.java)
+
+#### Os 8 tipos primitivos
+
+| Tipo | Tamanho | Faixa de valores | Exemplo |
+|------|---------|-------------------|---------|
+| `byte` | 1 byte | -128 a 127 | `byte b = 127;` |
+| `short` | 2 bytes | -32.768 a 32.767 | `short s = 32000;` |
+| `int` | 4 bytes | -2 bi a 2 bi | `int i = 2000000000;` |
+| `long` | 8 bytes | número gigante | `long l = 9000000000L;` |
+| `float` | 4 bytes | ~7 dígitos decimais | `float f = 3.14f;` |
+| `double` | 8 bytes | ~15 dígitos decimais | `double d = 3.14159;` |
+| `char` | 2 bytes | 1 caractere Unicode | `char c = 'A';` |
+| `boolean` | 1 bit | true ou false | `boolean b = true;` |
+
+> **Detalhe:** `String` **não é primitivo** — é um objeto (tipo referência).
+
+#### Casting (conversão de tipos)
+
+```mermaid
+flowchart LR
+    BYTE["byte"] --> SHORT["short"] --> INT["int"] --> LONG["long"] --> FLOAT["float"] --> DOUBLE["double"]
+    style BYTE fill:#4CAF50,color:#fff
+    style DOUBLE fill:#F44336,color:#fff
+```
+
+| Direção | Nome | O que faz | Exemplo |
+|---------|------|-----------|---------|
+| → Widening | Automático | Tipo menor → tipo maior | `double d = meuInt;` |
+| ← Narrowing | Manual | Tipo maior → tipo menor | `int i = (int) meuDouble;` |
+
+```java
+// Widening (automático): int → double
+int numInteiro = 100;
+double numDecimal = numInteiro; // 100.0
+
+// Narrowing (manual): double → int
+double preco = 9.99;
+int precoInteiro = (int) preco; // 9 (perde a parte decimal!)
+```
+
+### Operadores
+
+Os operadores são os símbolos que usamos para fazer operações com variáveis e valores. Java tem 4 grupos principais:
+
+> 📁 **Arquivo:** [`Fundamentos/Operadores.java`](Fundamentos/Operadores.java)
+
+#### Aritméticos
+
+| Operador | Nome | Exemplo | Resultado |
+|----------|------|---------|-----------|
+| `+` | Soma | `10 + 3` | `13` |
+| `-` | Subtração | `10 - 3` | `7` |
+| `*` | Multiplicação | `10 * 3` | `30` |
+| `/` | Divisão | `10 / 3` | `3` (inteira!) |
+| `%` | Módulo (resto) | `10 % 3` | `1` |
+| `++` | Incremento | `x++` | `x + 1` |
+| `--` | Decremento | `x--` | `x - 1` |
+
+#### Atribuição
+
+| Operador | Exemplo | Equivale a |
+|----------|---------|------------|
+| `=` | `x = 5` | `x = 5` |
+| `+=` | `x += 3` | `x = x + 3` |
+| `-=` | `x -= 3` | `x = x - 3` |
+| `*=` | `x *= 3` | `x = x * 3` |
+| `/=` | `x /= 3` | `x = x / 3` |
+| `%=` | `x %= 3` | `x = x % 3` |
+
+#### Comparação
+
+| Operador | Nome | Exemplo | Resultado |
+|----------|------|---------|-----------|
+| `==` | Igual | `10 == 20` | `false` |
+| `!=` | Diferente | `10 != 20` | `true` |
+| `>` | Maior | `10 > 20` | `false` |
+| `<` | Menor | `10 < 20` | `true` |
+| `>=` | Maior ou igual | `10 >= 20` | `false` |
+| `<=` | Menor ou igual | `10 <= 20` | `true` |
+
+#### Lógicos
+
+| Operador | Nome | Descrição | Exemplo |
+|----------|------|-----------|---------|
+| `&&` | AND | Ambos true? | `true && false → false` |
+| `\|\|` | OR | Pelo menos um true? | `true \|\| false → true` |
+| `!` | NOT | Inverte o valor | `!true → false` |
+
+### Strings
+
+`String` é um dos tipos mais usados em Java. Apesar de parecer um tipo primitivo, ela é na verdade um **objeto**, e por isso vem com vários métodos prontos pra manipular texto.
+
+> 📁 **Arquivo:** [`Fundamentos/Strings_em_java.java`](Fundamentos/Strings_em_java.java)
+
+```java
+String saudacao = "Olá, Mundo!";
+```
+
+#### Métodos mais usados
+
+| Método | O que faz | Exemplo | Resultado |
+|--------|-----------|---------|-----------|
+| `length()` | Tamanho da string | `"Olá".length()` | `3` |
+| `toUpperCase()` | Tudo maiúsculo | `"olá".toUpperCase()` | `"OLÁ"` |
+| `toLowerCase()` | Tudo minúsculo | `"OLÁ".toLowerCase()` | `"olá"` |
+| `indexOf()` | Posição de um trecho | `"Olá Mundo".indexOf("Mundo")` | `4` |
+| `contains()` | Contém o trecho? | `"Java".contains("av")` | `true` |
+| `charAt()` | Caractere na posição | `"Java".charAt(0)` | `'J'` |
+| `substring()` | Extrai trecho | `"Java".substring(1, 3)` | `"av"` |
+| `replace()` | Substitui trecho | `"Olá Mundo".replace("Mundo", "Java")` | `"Olá Java"` |
+| `trim()` | Remove espaços das pontas | `"  oi  ".trim()` | `"oi"` |
+| `split()` | Quebra em array | `"a,b,c".split(",")` | `["a","b","c"]` |
+
+#### Concatenação
+
+```java
+String nome = "Nicolau";
+int idade = 22;
+
+// Jeito 1: operador +
+System.out.println(nome + " tem " + idade + " anos");
+
+// Jeito 2: concat()
+System.out.println(nome.concat(" é estudante"));
+```
+
+#### Comparando Strings
+
+> **Importante:** nunca use `==` para comparar Strings! Use `equals()` ou `equalsIgnoreCase()`.
+
+```java
+String a = "Java";
+String b = "java";
+a.equals(b);            // false (case sensitive)
+a.equalsIgnoreCase(b);  // true
+```
+
+### Math
+
+A classe `Math` já vem pronta no Java e não precisa importar nada. Todos os métodos são `static`, então chamamos direto com `Math.metodo()`.
+
+> 📁 **Arquivo:** [`Fundamentos/Math_em_java.java`](Fundamentos/Math_em_java.java)
+
+| Método | O que faz | Exemplo | Resultado |
+|--------|-----------|---------|-----------|
+| `Math.max(a, b)` | Maior entre dois | `Math.max(10, 20)` | `20` |
+| `Math.min(a, b)` | Menor entre dois | `Math.min(10, 20)` | `10` |
+| `Math.abs(x)` | Valor absoluto | `Math.abs(-15)` | `15` |
+| `Math.round(x)` | Arredonda | `Math.round(4.7)` | `5` |
+| `Math.ceil(x)` | Arredonda pra cima | `Math.ceil(4.1)` | `5.0` |
+| `Math.floor(x)` | Arredonda pra baixo | `Math.floor(4.9)` | `4.0` |
+| `Math.pow(a, b)` | Potência (a^b) | `Math.pow(2, 3)` | `8.0` |
+| `Math.sqrt(x)` | Raiz quadrada | `Math.sqrt(64)` | `8.0` |
+| `Math.random()` | Aleatório [0, 1) | `Math.random()` | `0.xxx` |
+
+#### Constantes
+
+```java
+Math.PI  // 3.141592653589793
+Math.E   // 2.718281828459045
+```
+
+#### Gerando números aleatórios
+
+```java
+// Aleatório entre 0 e 100
+int aleatorio = (int)(Math.random() * 101);
+
+// Aleatório entre min e max (ex: 1 a 10)
+int min = 1, max = 10;
+int entre = (int)(Math.random() * (max - min + 1)) + min;
+```
+
+### Booleanos
+
+O tipo `boolean` só tem dois valores possíveis: `true` ou `false`. É a base de todas as decisões no código.
+
+> 📁 **Arquivo:** [`Fundamentos/Booleanos.java`](Fundamentos/Booleanos.java)
+
+```java
+boolean javaEhLegal = true;
+boolean pythonEhIgual = false;
+```
+
+Qualquer **expressão de comparação** retorna um boolean:
+
+```java
+int idade = 22;
+System.out.println(idade > 18);   // true
+System.out.println(idade == 30);  // false
+```
+
+Booleanos são fundamentais pra usar em **condições** (`if`, `while`, etc.):
+
+```java
+boolean maiorDeIdade = idade >= 18;
+
+if (maiorDeIdade) {
+    System.out.println("Pode entrar!");
+}
+```
+
+### Arrays
+
+Array é uma estrutura que armazena **múltiplos valores do mesmo tipo** em posições numeradas (índices começam em 0).
+
+> 📁 **Arquivo:** [`Fundamentos/Arrays_em_java.java`](Fundamentos/Arrays_em_java.java)
+
+```mermaid
+flowchart LR
+    subgraph "String[] carros"
+        I0["[0] Fusca"] --- I1["[1] Civic"] --- I2["[2] Corolla"] --- I3["[3] Gol"]
+    end
+```
+
+#### Criando arrays
+
+```java
+// Jeito 1: com valores
+String[] carros = {"Fusca", "Civic", "Corolla", "Gol"};
+
+// Jeito 2: declarar tamanho e preencher depois
+int[] notas = new int[4];
+notas[0] = 85;
+notas[1] = 92;
+```
+
+#### Acessando e modificando
+
+```java
+System.out.println(carros[0]);    // Fusca
+System.out.println(carros.length); // 4
+carros[0] = "Kombi";              // Trocou Fusca por Kombi
+```
+
+#### Percorrendo arrays
+
+```java
+// For normal (quando precisa do índice)
+for (int i = 0; i < carros.length; i++) {
+    System.out.println("Posição " + i + ": " + carros[i]);
+}
+
+// For-each (mais limpo quando não precisa do índice)
+for (String carro : carros) {
+    System.out.println("Carro: " + carro);
+}
+```
+
+#### Array multidimensional (matriz)
+
+```java
+int[][] matriz = {
+    {1, 2, 3},
+    {4, 5, 6},
+    {7, 8, 9}
+};
+
+for (int i = 0; i < matriz.length; i++) {
+    for (int j = 0; j < matriz[i].length; j++) {
+        System.out.print(matriz[i][j] + " ");
+    }
+    System.out.println();
+}
+```
+
+#### Métodos úteis (`java.util.Arrays`)
+
+```java
+import java.util.Arrays;
+
+int[] numeros = {5, 2, 8, 1, 9, 3};
+Arrays.sort(numeros);                         // Ordena: [1, 2, 3, 5, 8, 9]
+System.out.println(Arrays.toString(numeros)); // Imprime bonito
+int indice = Arrays.binarySearch(numeros, 5); // Busca (precisa estar ordenado)
+```
+
+---
+
+## Controle de Fluxo
+
+> 📁 **Exemplos deste tópico:** [`Controle de fluxo/`](Controle%20de%20fluxo/)
+
+Controle de fluxo é o que faz o programa tomar decisões e repetir ações. Sem isso, o código seria só uma sequência reta de instruções.
+
+```mermaid
+flowchart TD
+    CF["Controle de Fluxo"] --> COND["Condicionais"]
+    CF --> LOOP["Loops"]
+    CF --> CTRL["Controle de Loop"]
+    COND --> IF["if / else"]
+    COND --> SW["switch"]
+    LOOP --> WH["while"]
+    LOOP --> FR["for"]
+    CTRL --> BK["break"]
+    CTRL --> CT["continue"]
+```
+
+### If Else
+
+A estrutura `if` executa um bloco de código **se** a condição for `true`. O `else` trata o caso contrário.
+
+> 📁 **Arquivo:** [`Controle de fluxo/If_else.java`](Controle%20de%20fluxo/If_else.java)
+
+```mermaid
+flowchart TD
+    START["Início"] --> COND{"condição?"}
+    COND -->|true| IF["bloco if"]
+    COND -->|false| ELSE["bloco else"]
+    IF --> FIM["Fim"]
+    ELSE --> FIM
+```
+
+#### If simples
+
+```java
+int hora = 14;
+if (hora < 12) {
+    System.out.println("Bom dia!");
+}
+```
+
+#### If-Else
+
+```java
+int idade = 17;
+if (idade >= 18) {
+    System.out.println("Maior de idade");
+} else {
+    System.out.println("Menor de idade");
+}
+```
+
+#### Else If (encadeado)
+
+```mermaid
+flowchart TD
+    N["nota = 75"] --> A{">= 90?"}
+    A -->|Sim| RA["Conceito A"]
+    A -->|Não| B{">= 80?"}
+    B -->|Sim| RB["Conceito B"]
+    B -->|Não| C{">= 70?"}
+    C -->|Sim| RC["Conceito C ✅"]
+    C -->|Não| D{">= 60?"}
+    D -->|Sim| RD["Conceito D"]
+    D -->|Não| RE["Reprovado"]
+```
+
+```java
+int nota = 75;
+if (nota >= 90) {
+    System.out.println("Conceito A");
+} else if (nota >= 80) {
+    System.out.println("Conceito B");
+} else if (nota >= 70) {
+    System.out.println("Conceito C");
+} else if (nota >= 60) {
+    System.out.println("Conceito D");
+} else {
+    System.out.println("Reprovado");
+}
+```
+
+#### Operador Ternário
+
+Um `if-else` em uma única linha:
+
+```java
+// Sintaxe: variavel = (condição) ? valorSeTrue : valorSeFalse;
+String resultado = (idade >= 18) ? "Maior" : "Menor";
+```
+
+### Switch
+
+O `switch` é uma alternativa ao `if-else` quando você compara uma variável contra vários valores possíveis. Mais limpo e legível.
+
+> 📁 **Arquivo:** [`Controle de fluxo/Switch_case.java`](Controle%20de%20fluxo/Switch_case.java)
+
+```mermaid
+flowchart TD
+    VAR["diaSemana = 3"] --> C1{"case 1?"}
+    C1 -->|Não| C2{"case 2?"}
+    C2 -->|Não| C3{"case 3?"}
+    C3 -->|✅ Sim| R3["Quarta-feira → break"]
+    C3 -->|Não| C4{"case 4?"}
+    C4 -->|Não| DEF["default"]
+```
+
+```java
+int diaSemana = 3;
+switch (diaSemana) {
+    case 1:
+        System.out.println("Segunda-feira");
+        break;
+    case 2:
+        System.out.println("Terça-feira");
+        break;
+    case 3:
+        System.out.println("Quarta-feira");
+        break;
+    // ... mais cases
+    default:
+        System.out.println("Dia inválido");
+        break;
+}
+```
+
+> **Importante:** sem o `break`, o Java executa todos os cases abaixo do que bateu (isso se chama *fall-through*).
+
+O `switch` aceita: `int`, `byte`, `short`, `char`, `String` e `enum`.
+
+### While Loop
+
+O `while` repete um bloco **enquanto** a condição for `true`. Cuidado: se a condição nunca virar `false`, vira loop infinito!
+
+> 📁 **Arquivo:** [`Controle de fluxo/While_loop.java`](Controle%20de%20fluxo/While_loop.java)
+
+```mermaid
+flowchart TD
+    START["i = 1"] --> COND{"i <= 5?"}
+    COND -->|true| EXEC["println(i)\ni++"]
+    EXEC --> COND
+    COND -->|false| FIM["Saiu do loop"]
+```
+
+```java
+int i = 1;
+while (i <= 5) {
+    System.out.println("Contando: " + i);
+    i++; // Sem isso → loop infinito!
+}
+```
+
+#### Do-While
+
+A diferença do `do-while` é que ele executa o bloco **pelo menos uma vez**, porque a condição é verificada **depois** da execução.
+
+```java
+int x = 100;
+do {
+    System.out.println("Executou pelo menos uma vez! x = " + x);
+} while (x < 5); // false desde o início, mas rodou 1 vez
+```
+
+> **While vs Do-While:**
+>
+> | Tipo | Verifica quando? | Executa mínimo |
+> |------|-------------------|----------------|
+> | `while` | **Antes** de executar | 0 vezes |
+> | `do-while` | **Depois** de executar | 1 vez |
+
+### For Loop
+
+O `for` é usado quando você **sabe quantas vezes** quer repetir. A sintaxe já inclui inicialização, condição e incremento tudo numa linha.
+
+> 📁 **Arquivo:** [`Controle de fluxo/For_loop.java`](Controle%20de%20fluxo/For_loop.java)
+
+```
+for (início; condição; incremento) { }
+      ↓         ↓          ↓
+  int i=0    i < 5        i++
+```
+
+```java
+// For básico
+for (int i = 1; i <= 5; i++) {
+    System.out.println("Volta " + i);
+}
+
+// Contagem regressiva
+for (int i = 10; i >= 0; i--) {
+    System.out.print(i + " ");
+}
+```
+
+#### For-Each
+
+Mais limpo pra percorrer arrays quando não precisamos do índice:
+
+```java
+String[] frutas = {"Maçã", "Banana", "Laranja", "Manga"};
+for (String fruta : frutas) {
+    System.out.println("Fruta: " + fruta);
+}
+```
+
+> **For vs For-Each:**
+>
+> | Tipo | Quando usar | Sintaxe |
+> |------|------------|---------|
+> | `for` | Precisa do índice ou controle fino | `for (int i = 0; i < n; i++)` |
+> | `for-each` | Só quer percorrer tudo | `for (Tipo item : array)` |
+
+#### For aninhado
+
+Loop dentro de loop — útil pra matrizes e padrões:
+
+```java
+// Tabuada do 3
+for (int i = 1; i <= 10; i++) {
+    System.out.println(3 + " x " + i + " = " + (3 * i));
+}
+```
+
+### Break e Continue
+
+Dois comandos pra controlar o fluxo de dentro de um loop:
+
+- **`break`**: para o loop inteiro e sai dele
+- **`continue`**: pula a iteração atual e vai pra próxima
+
+> 📁 **Arquivo:** [`Controle de fluxo/Break_continue.java`](Controle%20de%20fluxo/Break_continue.java)
+
+```mermaid
+flowchart LR
+    subgraph "break"
+        B1["iteração"] --> B2{"condição?"} -->|true| B3["⛔ SAIR do loop"]
+    end
+    subgraph "continue"
+        C1["iteração"] --> C2{"condição?"} -->|true| C3["⏭️ PRÓXIMA iteração"]
+    end
+```
+
+#### Break
+
+```java
+for (int i = 1; i <= 10; i++) {
+    if (i == 5) {
+        System.out.println("Encontrei o 5! Parando.");
+        break; // Sai do loop completamente
+    }
+    System.out.println("Número: " + i);
+}
+// Saída: 1, 2, 3, 4, "Encontrei o 5!"
+```
+
+#### Continue
+
+```java
+// Imprime só os ímpares (pula os pares)
+for (int i = 1; i <= 10; i++) {
+    if (i % 2 == 0) {
+        continue; // Pula pra próxima iteração
+    }
+    System.out.println("Ímpar: " + i);
+}
+// Saída: 1, 3, 5, 7, 9
+```
+
+#### Break no While
+
+```java
+int soma = 0, num = 1;
+while (true) { // Loop "infinito" controlado pelo break
+    soma += num;
+    if (soma > 20) {
+        System.out.println("Soma passou de 20! Soma = " + soma);
+        break;
+    }
+    num++;
+}
+```
 
 ---
 
@@ -755,9 +1403,9 @@ Quando um `parâmetro` é passando para um método, ele é chamado de `argumento
 
 ```mermaid
 flowchart LR
-    CALL["myMethod(\"Liam\")"] -->|"Liam" → fname| METHOD["static void myMethod(String fname)"]
-    METHOD --> PRINT["println(fname + \" Refsnes\")"]
-    PRINT --> OUTPUT["\"Liam Refsnes\""]
+    CALL["myMethod(#quot;Liam#quot;)"] -->|Liam → fname| METHOD["static void myMethod(String fname)"]
+    METHOD --> PRINT["println(fname + #quot;Refsnes#quot;)"]
+    PRINT --> OUTPUT["Liam Refsnes"]
 ```
 
 ---
