@@ -36,6 +36,7 @@ Eu trabalhei muito com python, e o Java é bem diferente. Ele é mais verboso, o
   - [Booleanos](#booleanos)
   - [Arrays](#arrays)
   - [Lists](#lists)
+  - [LinkedList](#linkedlist)
   - [Imports](#imports)
 - [Controle de Fluxo](#controle-de-fluxo)
   - [If Else](#if-else)
@@ -75,6 +76,13 @@ Eu trabalhei muito com python, e o Java é bem diferente. Ele é mais verboso, o
   - [Estrutura de pastas de um projeto real](#estrutura-de-pastas-de-um-projeto-real)
   - [Compilando e rodando com pacotes](#compilando-e-rodando-com-pacotes)
   - [Convenções de nomenclatura](#convenções-de-nomenclatura)
+- [Tratamento de Erros](#tratamento-de-erros)
+  - [Try-Catch](#try-catch)
+  - [Múltiplos Catch](#múltiplos-catch)
+  - [Finally](#finally)
+  - [Throw e Throws](#throw-e-throws)
+  - [Exceções Customizadas](#exceções-customizadas)
+  - [Checked vs Unchecked](#checked-vs-unchecked)
 
 ---
 
@@ -89,6 +97,7 @@ Eu trabalhei muito com python, e o Java é bem diferente. Ele é mais verboso, o
 | 5 | Métodos e Funções | [`Métodos e funções/`](Métodos%20e%20funções/) |
 | 6 | Input de Dados | [`Input/`](Input/) |
 | 7 | Organização de Projeto | [`Organização de projeto/`](Organização%20de%20projeto/) |
+| 8 | Tratamento de Erros | [`Tratamento de erros/`](Tratamento%20de%20erros/) |
 
 ---
 
@@ -217,7 +226,8 @@ flowchart LR
     C --> F["Booleanos"]
     B --> G["Arrays"]
     G --> L["Lists"]
-    L --> H["Imports"]
+    L --> LL["LinkedList"]
+    LL --> H["Imports"]
 ```
 
 ### Variáveis
@@ -658,6 +668,111 @@ Collections.max(nums);        // Maior valor
 > **Quando usar cada um?**
 > - **Array:** quando o tamanho é conhecido e fixo (ex: dias da semana, meses do ano)
 > - **List:** quando o tamanho pode variar (ex: lista de usuários, carrinho de compras)
+
+### LinkedList
+
+A `LinkedList` é outra implementação da interface `List`, mas funciona de um jeito totalmente diferente do `ArrayList`. Enquanto o ArrayList usa um **array interno** (acesso rápido por índice), a LinkedList usa **nós encadeados** — cada elemento aponta para o próximo e o anterior, como uma corrente.
+
+A grande vantagem: inserir e remover elementos nas **pontas** (início/fim) é muito rápido. A desvantagem: acessar um elemento pelo índice é lento, porque precisa percorrer a corrente nó por nó.
+
+Além de ser uma List, a LinkedList também implementa a interface `Deque` (fila de duas pontas), o que permite usá-la como **fila** (FIFO) ou **pilha** (LIFO).
+
+> 📁 **Arquivo:** [`Fundamentos/LinkedList_em_java.java`](Fundamentos/LinkedList_em_java.java)
+
+```mermaid
+flowchart LR
+    subgraph "LinkedList (nós encadeados)"
+        N1["Nó 1\nTomar café"] -->|próximo| N2["Nó 2\nEstudar Java"]
+        N2 -->|próximo| N3["Nó 3\nRevisar código"]
+        N3 -->|próximo| N4["null"]
+    end
+```
+
+#### Criando e usando
+
+```java
+import java.util.LinkedList;
+
+LinkedList<String> tarefas = new LinkedList<>();
+tarefas.add("Estudar Java");
+tarefas.add("Fazer exercícios");
+tarefas.add("Revisar código");
+```
+
+#### Métodos exclusivos da LinkedList
+
+Estes métodos **não existem** no ArrayList:
+
+| Método | O que faz | Exemplo |
+|--------|-----------|---------|
+| `addFirst(item)` | Adiciona no início | `tarefas.addFirst("Café")` |
+| `addLast(item)` | Adiciona no final | `tarefas.addLast("Dormir")` |
+| `getFirst()` | Acessa o primeiro | `tarefas.getFirst()` |
+| `getLast()` | Acessa o último | `tarefas.getLast()` |
+| `removeFirst()` | Remove o primeiro | `tarefas.removeFirst()` |
+| `removeLast()` | Remove o último | `tarefas.removeLast()` |
+
+#### Usando como Fila (Queue — FIFO)
+
+FIFO = **First In, First Out** (primeiro a entrar, primeiro a sair). Como uma fila de banco.
+
+```java
+LinkedList<String> fila = new LinkedList<>();
+fila.offer("Cliente 1");    // Entra no final
+fila.offer("Cliente 2");
+
+fila.peek();                 // Olha o primeiro SEM remover → "Cliente 1"
+String atendido = fila.poll(); // Remove e retorna o primeiro → "Cliente 1"
+```
+
+```mermaid
+flowchart LR
+    subgraph "Fila (FIFO)"
+        direction LR
+        ENTRA["offer()"] --> F1["Cliente 1"] --> F2["Cliente 2"] --> F3["Cliente 3"]
+        F1 --> SAI["poll()"]
+    end
+```
+
+#### Usando como Pilha (Stack — LIFO)
+
+LIFO = **Last In, First Out** (último a entrar, primeiro a sair). Como uma pilha de pratos.
+
+```java
+LinkedList<String> pilha = new LinkedList<>();
+pilha.push("Página 1");     // Empilha (adiciona no topo)
+pilha.push("Página 2");
+pilha.push("Página 3");
+
+pilha.peek();                // Olha o topo → "Página 3"
+String removida = pilha.pop(); // Desempilha → "Página 3"
+```
+
+```mermaid
+flowchart TD
+    subgraph "Pilha (LIFO)"
+        TOPO["push() / pop()"] --> P3["Página 3 ← topo"]
+        P3 --> P2["Página 2"]
+        P2 --> P1["Página 1"]
+    end
+```
+
+#### ArrayList vs LinkedList
+
+> | | ArrayList | LinkedList |
+> |---|---|---|
+> | Estrutura interna | Array redimensionável | Nós encadeados (duplamente) |
+> | Acesso por índice (`get`) | ⚡ Rápido (O(1)) | 🐢 Lento (O(n)) |
+> | Inserir/remover no meio | 🐢 Lento (move elementos) | ⚡ Rápido (ajusta ponteiros) |
+> | Inserir/remover nas pontas | 🐢 No início é lento | ⚡ Rápido (O(1)) |
+> | Memória | Menos (só os dados) | Mais (dados + ponteiros) |
+> | Usar como Fila/Pilha | ❌ Não é ideal | ✅ Perfeito |
+
+> **Quando usar cada um?**
+> - **ArrayList:** maioria dos casos. Acesso rápido, iteração eficiente. Use quando o principal é **ler** dados.
+> - **LinkedList:** quando o principal é **inserir/remover** frequentemente, especialmente nas pontas. Ou quando precisa de fila/pilha.
+
+> **Nota:** "LinkedArray" não existe em Java. O que existe é `ArrayList` (array + list) e `LinkedList` (lista encadeada). São as duas implementações mais comuns da interface `List`.
 
 ### Imports
 
@@ -2096,3 +2211,280 @@ O Java tem convenções fortes pra nomear pacotes e organizar projetos:
 Em projetos do mundo real, pacotes costumam seguir o domínio reverso da empresa: `com.google.maps`, `br.com.empresa.sistema`. Nos nossos exemplos, mantemos simples com `com_organizacao.modelo` e `com_organizacao.servico`.
 
 > **Regra prática:** se você tem mais de 3 classes num arquivo, é hora de separar. Se você tem mais de 5 arquivos soltos, é hora de criar pacotes.
+
+---
+
+## Tratamento de Erros
+
+> 📁 **Exemplos deste tópico:** [`Tratamento de erros/`](Tratamento%20de%20erros/)
+
+Até agora, se qualquer coisa dava errado no código (dividir por zero, acessar um índice que não existe, etc.), o programa simplesmente **quebrava** e parava de rodar. No mundo real, isso não pode acontecer — imagina um app de banco que crasha porque alguém digitou uma letra no campo de valor? O tratamento de erros (ou _exception handling_) é o mecanismo do Java pra **capturar** esses erros, **tratar** eles, e deixar o programa continuar rodando.
+
+```mermaid
+flowchart TD
+    TE["Tratamento de Erros"] --> TC["try-catch"]
+    TE --> FIN["finally"]
+    TE --> TT["throw / throws"]
+    TE --> CUSTOM["Exceções customizadas"]
+    TC --> MULTI["Múltiplos catch"]
+    TT --> CHECKED["Checked Exceptions"]
+    TT --> UNCHECKED["Unchecked Exceptions"]
+```
+
+### Try-Catch
+
+O `try-catch` é a base de tudo. Você coloca o código que **pode dar erro** dentro do `try`, e o tratamento no `catch`. Se der erro, o Java pula pro `catch` em vez de crashar.
+
+> 📁 **Arquivo:** [`Tratamento de erros/Try_catch.java`](Tratamento%20de%20erros/Try_catch.java)
+
+```mermaid
+flowchart TD
+    TRY["try { código arriscado }"] --> ERR{"Deu erro?"}
+    ERR -->|Sim| CATCH["catch: trata o erro"]
+    ERR -->|Não| CONT["Continua normal"]
+    CATCH --> CONT
+```
+
+```java
+try {
+    int resultado = 10 / 0; // ArithmeticException!
+} catch (ArithmeticException e) {
+    System.out.println("Erro: não pode dividir por zero!");
+    System.out.println("Mensagem: " + e.getMessage());
+}
+System.out.println("Programa continua rodando!"); // Não crashou
+```
+
+Sem o `try-catch`, a divisão por zero derrubaria o programa inteiro. Com ele, o erro é capturado, tratado, e o código continua executando normalmente.
+
+### Múltiplos Catch
+
+Cada tipo de erro pode ser tratado de forma diferente. Os catches são verificados em ordem, de cima pra baixo. Coloque os mais **específicos primeiro** e o mais genérico (`Exception`) por último:
+
+```java
+try {
+    int[] numeros = {1, 2, 3};
+    System.out.println(numeros[10]); // Erro!
+} catch (ArrayIndexOutOfBoundsException e) {
+    System.out.println("Índice fora dos limites!");
+} catch (ArithmeticException e) {
+    System.out.println("Problema matemático!");
+} catch (Exception e) {
+    // Pega QUALQUER erro que não foi capturado acima
+    System.out.println("Erro inesperado: " + e.getMessage());
+}
+```
+
+```mermaid
+flowchart TD
+    ERR["Exceção lançada"] --> C1{"ArrayIndex\nOutOfBounds?"}
+    C1 -->|Sim| T1["Trata índice"]
+    C1 -->|Não| C2{"Arithmetic\nException?"}
+    C2 -->|Sim| T2["Trata matemático"]
+    C2 -->|Não| C3{"Exception\n(genérica)?"}
+    C3 -->|Sim| T3["Trata genérico"]
+```
+
+#### Exceções mais comuns
+
+| Exceção | Quando acontece | Exemplo |
+|---------|-----------------|---------|
+| `ArithmeticException` | Divisão por zero | `10 / 0` |
+| `ArrayIndexOutOfBoundsException` | Índice fora do array | `arr[10]` (array de 3) |
+| `NullPointerException` | Acessar algo que é `null` | `null.length()` |
+| `NumberFormatException` | Converter texto inválido | `Integer.parseInt("abc")` |
+| `StringIndexOutOfBoundsException` | Posição inválida na string | `"Oi".charAt(10)` |
+| `IllegalArgumentException` | Argumento inválido para método | Valor negativo onde não pode |
+| `ClassCastException` | Cast inválido entre tipos | `(String) objetoInteiro` |
+
+### Finally
+
+O bloco `finally` **SEMPRE executa**, aconteça o que acontecer — deu erro ou não. É o lugar perfeito pra liberar recursos (fechar arquivos, conexões de banco, etc.).
+
+```java
+try {
+    int resultado = 10 / 0;
+} catch (ArithmeticException e) {
+    System.out.println("Erro capturado!");
+} finally {
+    System.out.println("Isso SEMPRE executa!"); // Sempre aparece
+}
+```
+
+```mermaid
+flowchart TD
+    TRY["try"] --> ERR{"Erro?"}
+    ERR -->|Sim| CATCH["catch"]
+    ERR -->|Não| OK["✅ Sucesso"]
+    CATCH --> FIN["finally\n(SEMPRE executa)"]
+    OK --> FIN
+    FIN --> CONT["Continua o programa"]
+```
+
+> **Quando usar finally?**
+> - Fechar arquivos, streams, conexões
+> - Liberar recursos que foram abertos no `try`
+> - Qualquer "limpeza" que precisa acontecer independente do resultado
+
+### Throw e Throws
+
+Até agora, os erros aconteciam sozinhos (divisão por zero, índice inválido). Mas e quando **você** quer lançar um erro propositalmente? É aí que entram `throw` e `throws`.
+
+> 📁 **Arquivo:** [`Tratamento de erros/Throw_throws.java`](Tratamento%20de%20erros/Throw_throws.java)
+
+- **`throw`**: **lança** uma exceção manualmente, dentro do método
+- **`throws`**: **declara** na assinatura do método que ele pode lançar uma exceção
+
+```mermaid
+flowchart LR
+    subgraph "throw (dentro do método)"
+        CODE["if (idade < 0)"] --> THROW["throw new\nIllegalArgumentException()"]
+    end
+    subgraph "throws (na assinatura)"
+        SIG["void lerArquivo()\nthrows IOException"] --> AVISA["Avisa: pode dar erro!\nQuem chamar TRATA."]
+    end
+```
+
+#### Throw
+
+```java
+static void verificarIdade(int idade) {
+    if (idade < 0) {
+        throw new IllegalArgumentException("Idade não pode ser negativa!");
+    }
+    if (idade < 18) {
+        throw new ArithmeticException("Menor de idade!");
+    }
+    System.out.println("Acesso permitido!");
+}
+
+// Uso:
+try {
+    verificarIdade(-5); // Lança IllegalArgumentException
+} catch (IllegalArgumentException e) {
+    System.out.println("Erro: " + e.getMessage());
+}
+```
+
+#### Throws
+
+Quando um método declara `throws`, quem chamar é **obrigado** a tratar com `try-catch`:
+
+```java
+// O "throws" avisa: esse método pode lançar IOException
+static void lerArquivo(String caminho) throws java.io.IOException {
+    if (caminho == null || caminho.isEmpty()) {
+        throw new java.io.IOException("Caminho inválido!");
+    }
+    System.out.println("Lendo arquivo: " + caminho);
+}
+
+// Quem chama PRECISA tratar:
+try {
+    lerArquivo("dados.txt");
+} catch (java.io.IOException e) {
+    System.out.println("Erro: " + e.getMessage());
+}
+```
+
+> **Throw vs Throws:**
+>
+> | | `throw` | `throws` |
+> |---|---|---|
+> | O que faz | **Lança** a exceção | **Declara** que pode lançar |
+> | Onde usa | Dentro do método | Na assinatura do método |
+> | Sintaxe | `throw new Exception()` | `void metodo() throws Exception` |
+> | Quem trata? | Quem chamou (ou o próprio método) | Quem chamou é **obrigado** a tratar |
+
+### Exceções Customizadas
+
+As exceções padrão do Java cobrem muitos casos, mas às vezes você precisa de algo mais específico pro seu domínio. Aí você cria suas próprias exceções!
+
+> 📁 **Arquivo:** [`Tratamento de erros/Excecoes_customizadas.java`](Tratamento%20de%20erros/Excecoes_customizadas.java)
+
+Basta criar uma classe que `extends Exception` (checked) ou `extends RuntimeException` (unchecked):
+
+```java
+// Exceção checked: OBRIGA quem chama a tratar
+class SaldoInsuficienteException extends Exception {
+    private double saldoAtual;
+    private double valorSolicitado;
+
+    SaldoInsuficienteException(double saldoAtual, double valorSolicitado) {
+        super("Saldo insuficiente! Saldo: R$" + saldoAtual +
+              " | Solicitado: R$" + valorSolicitado);
+        this.saldoAtual = saldoAtual;
+        this.valorSolicitado = valorSolicitado;
+    }
+}
+
+// Exceção unchecked: NÃO obriga (mas é boa prática tratar)
+class IdadeInvalidaException extends RuntimeException {
+    IdadeInvalidaException(int idade) {
+        super("Idade inválida: " + idade);
+    }
+}
+```
+
+Usando:
+
+```java
+class ContaBancaria {
+    private double saldo;
+
+    void sacar(double valor) throws SaldoInsuficienteException {
+        if (valor > saldo) {
+            throw new SaldoInsuficienteException(saldo, valor);
+        }
+        saldo -= valor;
+    }
+}
+
+// Uso:
+try {
+    conta.sacar(5000); // Saldo insuficiente!
+} catch (SaldoInsuficienteException e) {
+    System.out.println("Erro: " + e.getMessage());
+}
+```
+
+> **Quando criar exceções customizadas?**
+> - Quando as exceções padrão não expressam bem o problema
+> - Quando você quer carregar **informações extras** no erro (ex: saldo atual, valor solicitado)
+> - Em projetos maiores, pra manter a consistência dos erros do sistema
+
+### Checked vs Unchecked
+
+Essa é uma distinção importante em Java que não existe em muitas outras linguagens:
+
+```mermaid
+flowchart TD
+    THROWABLE["Throwable"] --> ERROR["Error\n(problemas graves da JVM)"]
+    THROWABLE --> EXCEPTION["Exception"]
+    EXCEPTION --> CHECKED["Checked Exceptions\n(extends Exception)"]
+    EXCEPTION --> UNCHECKED["Unchecked Exceptions\n(extends RuntimeException)"]
+    CHECKED --> IO["IOException"]
+    CHECKED --> SQL["SQLException"]
+    CHECKED --> CUSTOM1["SaldoInsuficienteException"]
+    UNCHECKED --> NPE["NullPointerException"]
+    UNCHECKED --> IAE["IllegalArgumentException"]
+    UNCHECKED --> AIOOB["ArrayIndexOutOfBoundsException"]
+```
+
+> | | Checked | Unchecked |
+> |---|---|---|
+> | Herda de | `Exception` | `RuntimeException` |
+> | Compilador obriga tratar? | ✅ Sim | ❌ Não |
+> | Quando acontece? | Problemas **previsíveis** (I/O, rede) | Erros de **programação** (null, índice) |
+> | `throws` na assinatura? | ✅ Obrigatório | ❌ Opcional |
+> | Exemplo | `IOException`, `SQLException` | `NullPointerException`, `ArithmeticException` |
+
+> **Comparação com Python:**
+>
+> | Python | Java |
+> |--------|------|
+> | `try: ... except:` | `try { ... } catch { ... }` |
+> | `raise ValueError()` | `throw new IllegalArgumentException()` |
+> | `finally:` | `finally { }` |
+> | Sem checked exceptions | Tem checked e unchecked |
+> | `class MeuErro(Exception):` | `class MeuErro extends Exception { }` |
